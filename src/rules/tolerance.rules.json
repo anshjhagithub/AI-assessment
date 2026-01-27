@@ -1,0 +1,39 @@
+{
+  "priceTolerancePercent": 2,
+  "qtyTolerancePercent": 5,
+  "amountTolerancePercent": 1,
+  "allowMissingGRN": false,
+
+  "rules": [
+    {
+      "id": "3WAY_GRN_MISSING",
+      "description": "GRN must be present for invoice validation",
+      "severity": "critical",
+      "suggestedFix": "Create GRN before processing invoice"
+    },
+    {
+      "id": "3WAY_PO_LINE_MISSING",
+      "description": "Each invoice line must exist in PO",
+      "severity": "critical",
+      "suggestedFix": "Verify invoice lines match PO"
+    },
+    {
+      "id": "3WAY_PRICE_TOL_01",
+      "description": "Invoice unit price must be within tolerance vs PO price",
+      "severity": "major",
+      "suggestedFix": "Raise debit note or update PO price"
+    },
+    {
+      "id": "3WAY_QTY_TOL_01",
+      "description": "Invoice quantity must be within tolerance vs GRN quantity",
+      "severity": "major",
+      "suggestedFix": "Confirm receipt quantity or update GRN"
+    },
+    {
+      "id": "3WAY_MATERIAL_MISMATCH",
+      "description": "Invoice material must match PO material",
+      "severity": "major",
+      "suggestedFix": "Verify material code and description"
+    }
+  ]
+}

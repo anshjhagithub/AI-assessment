@@ -1,0 +1,63 @@
+{
+  "info": {
+    "name": "SAP Payment Validation Agent",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for Task-6 Payment Validation & Verification Agent"
+  },
+  "item": [
+    {
+      "name": "1. Run Validation – Normal (OKAY)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"invoiceId\": \"INV-7788\",\n  \"poId\": \"PO-10091\",\n  \"grnId\": \"GRN-0091\",\n  \"vendorId\": \"VEND-22\",\n  \"entitlementRef\": {\n    \"modelId\": \"CPM-001\",\n    \"entitlementId\": \"ENT-001\"\n  },\n  \"context\": {\n    \"requesterUserId\": \"U-100\",\n    \"approverUserId\": \"U-105\",\n    \"budgetAvailable\": 6000000\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/sap/validation/run",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["sap", "validation", "run"]
+        }
+      }
+    },
+    {
+      "name": "2. Run Validation – SOD Violation (REJECT)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"invoiceId\": \"INV-7788\",\n  \"poId\": \"PO-10091\",\n  \"grnId\": \"GRN-0091\",\n  \"vendorId\": \"VEND-22\",\n  \"entitlementRef\": {\n    \"modelId\": \"CPM-001\",\n    \"entitlementId\": \"ENT-001\"\n  },\n  \"context\": {\n    \"requesterUserId\": \"U-100\",\n  \"approverUserId\": \"U-100\",\n    \"budgetAvailable\": 6000000\n  }\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/sap/validation/run",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["sap", "validation", "run"]
+        }
+      }
+    },
+    {
+      "name": "3. Get Validation Report",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/sap/validation/{{runId}}/report",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["sap", "validation", "{{runId}}", "report"]
+        }
+      }
+    }
+  ]
+}

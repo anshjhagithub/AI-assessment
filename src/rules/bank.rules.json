@@ -1,0 +1,30 @@
+{
+  "ifscPattern": "^[A-Z]{4}0[A-Z0-9]{6}$",
+
+  "minNameMatchScore": 0.75,
+
+  "bankChangeLookbackDays": 30,
+
+  "highValueThreshold": 1000000,
+
+  "rules": [
+    {
+      "id": "BANK_IFSC_INVALID",
+      "description": "IFSC code format must be valid",
+      "severity": "critical",
+      "suggestedFix": "Correct IFSC code using official bank records"
+    },
+    {
+      "id": "BANK_NAME_MISMATCH",
+      "description": "Vendor name and account holder name must closely match",
+      "severity": "major",
+      "suggestedFix": "Verify beneficiary name with vendor documents"
+    },
+    {
+      "id": "BANK_RECENT_CHANGE_HIGH_VALUE",
+      "description": "Bank details were changed recently and invoice amount is high",
+      "severity": "major",
+      "suggestedFix": "Initiate vendor callback verification before payment"
+    }
+  ]
+}

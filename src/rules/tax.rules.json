@@ -1,0 +1,38 @@
+{
+  "requireHSN": true,
+  "gstRates": [0, 5, 12, 18, 28],
+
+  "gstTolerancePercent": 1.0,
+  "tdsTolerancePercent": 1.0,
+
+  "tdsRatePercent": 10,
+
+  "roundingPolicy": "ROUND_NEAREST_RUPEE",
+
+  "rules": [
+    {
+      "id": "TAX_HSN_MISSING",
+      "description": "HSN/SAC code must be present for all taxable line items",
+      "severity": "major",
+      "suggestedFix": "Add HSN/SAC code in invoice line item"
+    },
+    {
+      "id": "TAX_INVALID_GST_RATE",
+      "description": "GST rate must be one of the configured valid rates",
+      "severity": "major",
+      "suggestedFix": "Correct GST percentage as per GST slab"
+    },
+    {
+      "id": "TAX_GST_MISMATCH",
+      "description": "GST calculated does not match invoice GST within tolerance",
+      "severity": "major",
+      "suggestedFix": "Recalculate GST or correct invoice tax section"
+    },
+    {
+      "id": "TAX_TDS_MISMATCH",
+      "description": "TDS calculated does not match invoice TDS within tolerance",
+      "severity": "minor",
+      "suggestedFix": "Verify vendor TDS applicability and recompute"
+    }
+  ]
+}

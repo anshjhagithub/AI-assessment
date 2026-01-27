@@ -1,0 +1,36 @@
+{
+  "requireSeparationOfDuties": true,
+
+  "maxInvoiceAmountWithoutApproval": 500000,
+
+  "budgetExceedTolerancePercent": 0,
+
+  "ceilingExceedTolerancePercent": 0,
+
+  "rules": [
+    {
+      "id": "COMP_SOD_VIOLATION",
+      "description": "Requester and Approver must be different users",
+      "severity": "critical",
+      "suggestedFix": "Assign a different approver for the transaction"
+    },
+    {
+      "id": "COMP_BUDGET_EXCEEDED",
+      "description": "Invoice amount exceeds available budget",
+      "severity": "major",
+      "suggestedFix": "Request additional budget or split invoice"
+    },
+    {
+      "id": "COMP_PO_CEILING_EXCEEDED",
+      "description": "Invoice amount exceeds PO ceiling limit",
+      "severity": "critical",
+      "suggestedFix": "Amend the PO or reject the invoice"
+    },
+    {
+      "id": "COMP_HIGH_VALUE_APPROVAL_REQUIRED",
+      "description": "High value invoices require senior management approval",
+      "severity": "minor",
+      "suggestedFix": "Route invoice to senior approver"
+    }
+  ]
+}
