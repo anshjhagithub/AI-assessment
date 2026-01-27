@@ -277,6 +277,15 @@ Designed to be:
 
 ---
 
+## 🔄 Recent Update: Agentic AI Validation
+
+This project now includes an agentic AI layer that:
+- Runs domain-specific agents (Tax, Compliance, Risk)
+- Executes asynchronously (non-blocking)
+- Incrementally enriches validation reports
+- Preserves deterministic validation as the source of truth
+
+
 ## 📌 Ideal Use Cases
 
 * SAP / ERP payment pre-checks
