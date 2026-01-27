@@ -4,6 +4,9 @@ import { getPO } from '../services/po.service.js';
 import { getGRN } from '../services/grn.service.js';
 import { getVendor } from '../services/vendor.service.js';
 import { getEntitlement } from '../services/entitlementProxy.service.js';
+import { runAgenticAnalysis } from "../ai/validationOrchestrator.agent.js";
+
+
 
 import { validate3WayMatch } from '../services/match3way.service.js';
 import { validateTax } from '../services/taxValidation.service.js';
@@ -56,6 +59,40 @@ export const runValidation = async (req, res, next) => {
     // Final decision
     // ===============================
     const decisionResult = makeDecision(allExceptions);
+    // ===============================
+// Agentic AI analysis
+// ===============================
+// ===============================
+// 🤖 Agentic AI (BACKGROUND, NON-BLOCKING)
+// ===============================
+// ===============================
+// 🤖 Agentic AI (BACKGROUND, NON-BLOCKING)
+// ===============================
+setTimeout(async () => {
+  try {
+    const agenticAnalysis = await runAgenticAnalysis({
+      decision: decisionResult.decision,
+      tax: taxValidation,
+      compliance: complianceValidation,
+      exceptions: allExceptions
+    });
+
+    const existingReport = await getReport(runId);
+
+    await generateReport(runId, {
+      ...existingReport,
+      aiAgents: agenticAnalysis
+    });
+
+    console.log("Agentic AI completed for", runId);
+  } catch (err) {
+    console.error("Agentic AI failed:", err.message);
+  }
+}, 0);
+
+
+
+
 
     // ===============================
     // Persist validation run
@@ -91,29 +128,33 @@ export const runValidation = async (req, res, next) => {
     // Persist report
     // ===============================
     const reportPayload = {
-      runId,
-      decision: decisionResult.decision,
-      summary: decisionResult.summary,
+  runId,
+  decision: decisionResult.decision,
+  summary: decisionResult.summary,
 
-      computedAmounts: {
-        netPayable: entitlement.entitlement_json.netPayable,
-        gstCalculated: taxValidation.calculatedGST,
-        tdsCalculated: taxValidation.calculatedTDS
-      },
+  computedAmounts: {
+    netPayable: entitlement.entitlement_json.netPayable,
+    gstCalculated: taxValidation.calculatedGST,
+    tdsCalculated: taxValidation.calculatedTDS
+  },
 
-      threeWayMatch,
-      tax: taxValidation,
-      bank: bankValidation,
-      compliance: complianceValidation,
+  threeWayMatch,
+  tax: taxValidation,
+  bank: bankValidation,
+  compliance: complianceValidation,
 
-      exceptions: allExceptions,
-      reasoning: decisionResult.reasoning,
-      routingSuggestions: decisionResult.routingSuggestions,
-      recommendations: generateRecommendations(
-        decisionResult.decision,
-        allExceptions
-      )
-    };
+  exceptions: allExceptions,
+  reasoning: decisionResult.reasoning,
+  routingSuggestions: decisionResult.routingSuggestions,
+
+  // ❌ NO aiAgents HERE
+
+  recommendations: generateRecommendations(
+    decisionResult.decision,
+    allExceptions
+  )
+};
+
 
     await generateReport(runId, reportPayload);
 
