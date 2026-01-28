@@ -1,53 +1,58 @@
 import { llm } from "./llmClient.js";
-import { ChatPromptTemplate } from "@langchain/core/prompts";
 
-const prompt = ChatPromptTemplate.fromTemplate(`
-You are a senior SAP Finance & Compliance Analyst.
+export async function runValidationReasoningAgent({
+  decision,
+  summary,
+  exceptions,
+  tax,
+  compliance,
+  bank,
+  threeWayMatch,
+  computedAmounts
+}) {
+  const prompt = `
+You are a senior SAP Finance & Compliance Officer AI.
 
-Given the following validation results from a payment validation system,
-generate a professional explanation that includes:
+Invoice validation summary:
+Decision: ${decision}
+Major issues: ${summary.major}
+Minor issues: ${summary.minor}
+Critical issues: ${summary.critical}
 
-1. Overall risk assessment
-2. Why the decision was taken
-3. Key problem areas (if any)
-4. What the finance team should do next
+Tax issues:
+${tax.exceptions.map(e => `- ${e.message}`).join("\n")}
 
-Decision: {decision}
+Compliance issues:
+${compliance.exceptions.map(e => `- ${e.message}`).join("\n")}
 
-Exceptions:
-{exceptions}
+Bank issues:
+${bank.exceptions.length === 0 ? "None" : bank.exceptions.map(e => `- ${e.message}`).join("\n")}
 
-Rules:
-- Do NOT invent data
-- Do NOT change the decision
-- Only explain what is provided
-- Keep it audit-friendly
-`);
+3-Way match issues:
+${threeWayMatch.exceptions.length === 0 ? "None" : threeWayMatch.exceptions.map(e => `- ${e.message}`).join("\n")}
 
-export const generateAIReasoning = async ({ decision, exceptions }) => {
-  if (!exceptions || exceptions.length === 0) {
-    return {
-      summary: "No exceptions detected. Invoice is safe for processing.",
-      riskLevel: "LOW",
-      explanation: "All validation checks passed successfully.",
-    };
+Computed values:
+GST Calculated: ${computedAmounts.gstCalculated}
+TDS Calculated: ${computedAmounts.tdsCalculated}
+
+Respond ONLY in JSON with keys:
+narrative, keyFindings (array), riskLevel, recommendation.
+`;
+
+  const response = await llm.invoke(prompt);
+
+  let parsed;
+  try {
+    parsed = JSON.parse(response.content);
+  } catch {
+    throw new Error("AI returned non-JSON response");
   }
 
-  const response = await llm.invoke(
-    await prompt.format({
-      decision,
-      exceptions: JSON.stringify(exceptions, null, 2),
-    })
-  );
-
   return {
-    summary: response.content,
-    riskLevel:
-      decision === "REJECT"
-        ? "HIGH"
-        : decision === "HOLD"
-        ? "MEDIUM"
-        : "LOW",
-    explanation: response.content,
+    confidence: Math.max(
+      0.5,
+      1 - (summary.major * 0.15 + summary.critical * 0.25)
+    ),
+    ...parsed
   };
-};
+}
